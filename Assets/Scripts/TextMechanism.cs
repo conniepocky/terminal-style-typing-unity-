@@ -6,59 +6,59 @@ using TMPro;
 
 public class TextMechanism : MonoBehaviour
 {
-    //text mesh pro gameobject
-    public TextMeshProUGUI[] terminalTexts = new TextMeshProUGUI[5];
 
-    int count = 0;
+    GameObject FindChildWithTag(GameObject parent, string tag) {
+        GameObject child = null;
+        
+        foreach(Transform transform in parent.transform) {
+            if(transform.CompareTag(tag)) {
+                child = transform.gameObject;
+                break;
+            }
+        }
+        
+        return child;
+    }
 
-    public TextMeshProUGUI text;
+    public GameObject line;
 
-    public TMP_InputField inputField;
+    public TMP_InputField lineInput;
+
+    public ScrollRect scrollRect;
+
+    void Start()
+    {
+        var pos = new Vector2(0f, Mathf.Sin(Time.time * 10f) * 100f);
+        scrollRect.content.localPosition = pos;
+    }
 
     //when enter pressed in input field
+
+    public string OutputMessage() {
+        return "Hello World!";
+    }
 
     public void SubmitInput()
     {
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            TextMeshProUGUI newText = Instantiate(text, text.transform.parent);
+            GameObject newLine = Instantiate(line, line.transform.parent);
 
-            var elem = newText.GetComponentsInChildren<Selectable>();
+            var elem = newLine.GetComponentsInChildren<Selectable>();
 
             foreach (var e in elem)
             {
                 e.interactable = false;
             }
 
-            Debug.Log(count);
-            Debug.Log(terminalTexts[0]);
+            GameObject output = FindChildWithTag(newLine, "output");
+            
+            output.GetComponent<TextMeshProUGUI>().text = OutputMessage();
 
-            if (count >= 3) {
-                Destroy(terminalTexts[0].gameObject);
-                for (int i = 0; i < 3; i++) {
-                    terminalTexts[i] = terminalTexts[i + 1];
-                    if (terminalTexts[i] != null) {
-                        terminalTexts[i].transform.position = new Vector3(terminalTexts[i].transform.position.x, terminalTexts[i].transform.position.y + 50, terminalTexts[i].transform.position.z);
-                    }
-                }
+            lineInput.text = "";
 
-                terminalTexts[count-1] = newText;
-                count += 1;
-
-                newText.transform.position = new Vector3(newText.transform.position.x, newText.transform.position.y + 50, newText.transform.position.z);
-
-                inputField.text = "";
-                text.transform.position = new Vector3(text.transform.position.x, text.transform.position.y, text.transform.position.z);
-
-                count = 3;
-            } else {
-                terminalTexts[count] = newText;
-                count += 1;
-
-                inputField.text = "";
-                text.transform.position = new Vector3(text.transform.position.x, text.transform.position.y - 50, text.transform.position.z);
-            }
+            line.transform.position = new Vector3(line.transform.position.x, line.transform.position.y - 100, line.transform.position.z);
         }
 
     }
