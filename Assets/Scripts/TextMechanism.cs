@@ -34,8 +34,15 @@ public class TextMechanism : MonoBehaviour
 
     //when enter pressed in input field
 
-    public string OutputMessage() {
-        return "Hello World!";
+    public string OutputMessage(string input) {
+        var msg = input.ToLower();
+
+        if (msg == "hello") {
+            return "Greetings!";
+        } else if (msg == "help") {
+            return "Enter 'email' to see list of messages. \nEnter 'shop' to upgrade your system. \nEnter 'exit' to close the terminal.";
+        }
+        return "ERR Command not found. Enter 'help' for list of commands.";
     }
 
     public void SubmitInput()
@@ -54,11 +61,21 @@ public class TextMechanism : MonoBehaviour
 
             GameObject output = FindChildWithTag(newLine, "output");
             
-            output.GetComponent<TextMeshProUGUI>().text = OutputMessage();
+            output.GetComponent<TextMeshProUGUI>().text = OutputMessage(newLine.GetComponentInChildren<TMP_InputField>().text);
+
+            var lineCount = output.GetComponent<TextMeshProUGUI>().text.Split('\n').Length;
+
+            var outputH = 100;
+
+            if (lineCount > 1) {
+                outputH += (15 * lineCount);
+            }
+
+            Debug.Log(outputH);
 
             lineInput.text = "";
 
-            line.transform.position = new Vector3(line.transform.position.x, line.transform.position.y - 100, line.transform.position.z);
+            line.transform.position = new Vector3(line.transform.position.x, line.transform.position.y - outputH, line.transform.position.z);
         }
 
     }
